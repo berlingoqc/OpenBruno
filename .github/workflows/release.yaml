@@ -37,6 +37,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bruno_1.27.0-${{ matrix.name }}
-        path: packages/bruno-electron/out/bruno_(.*)dmg
+        path: packages/bruno-electron/out/bruno_1.27.0_arm64_mac.dmg
 
-        
