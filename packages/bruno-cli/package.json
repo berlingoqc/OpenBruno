@@ -1,17 +1,14 @@
 {
-  "name": "@openbruno/cli",
+  "name": "@berlingoqc/openbruno-cli",
   "version": "1.16.0",
   "license": "MIT",
   "main": "src/index.js",
   "bin": {
     "openbru": "./bin/bru.js"
   },
-  "bugs": {
-    "url": "https://github.com/usebruno/bruno/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/usebruno/bruno.git"
+  "repository": "https://github.com/berlingoqc/openbruno",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "test": "node --experimental-vm-modules $(npx which jest)"

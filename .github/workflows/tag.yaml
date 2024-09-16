@@ -6,19 +6,6 @@ on:
       - '*'
 
 jobs:
-  version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Get the version
-        id: tag
-        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-      - name: Check output
-        run: echo $VERSION
-        env:
-          VERSION: ${{ steps.tag.outputs.tag }}
-
   build:
     runs-on: ${{ matrix.os }}
     needs: version
