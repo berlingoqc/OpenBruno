@@ -2,13 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import path from 'path';
 import { useDispatch } from 'react-redux';
 import { get, cloneDeep } from 'lodash';
-import { runCollectionFolder, cancelRunnerExecution } from 'providers/ReduxStore/slices/collections/actions';
+import { runCollectionFolder, cancelRunnerExecution, runCollectionFolders } from 'providers/ReduxStore/slices/collections/actions';
 import { resetCollectionRunner } from 'providers/ReduxStore/slices/collections';
 import { findItemInCollection, getTotalRequestCountInCollection } from 'utils/collections';
 import { IconRefresh, IconCircleCheck, IconCircleX, IconCheck, IconX, IconRun } from '@tabler/icons';
 import slash from 'utils/common/slash';
 import ResponsePane from './ResponsePane';
 import StyledWrapper from './StyledWrapper';
+import { findAllFoldersInCollection } from 'utils/collections/index';
+import RunnerConfiguration from './RunnerConfiguration/index';
 
 const getRelativePath = (fullPath, pathname) => {
   // convert to unix style path
@@ -25,6 +27,8 @@ export default function RunnerResults({ collection }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [delay, setDelay] = useState(null);
 
+  const [specificRun, setSpecificRun] = useState({ folders: [], useRuntimeVariable: true, variables: [] });
+
   // ref for the runner output body
   const runnerBodyRef = useRef();
 
@@ -40,6 +44,9 @@ export default function RunnerResults({ collection }) {
       setSelectedItem(null);
     }
     autoScrollRunnerBody();
+
+    setCollectionFolders(findAllFoldersInCollection(collection).map(folder => ({ folder, selected: false})));
+
   }, [collection, setSelectedItem]);
 
   const collectionCopy = cloneDeep(collection);
@@ -81,6 +88,10 @@ export default function RunnerResults({ collection }) {
   const runCollection = () => {
     dispatch(runCollectionFolder(collection.uid, null, true, Number(delay)));
   };
+
+  const runFolders = () => {
+    dispatch(runCollectionFolders(collection.uid, collectionFolders.filter(folder => folder.selected).map(f => f.folder.uid), true, Number(delay)));
+  }
 
   const runAgain = () => {
     dispatch(runCollectionFolder(collection.uid, runnerInfo.folderUid, runnerInfo.isRecursive, Number(delay)));
@@ -130,6 +141,13 @@ export default function RunnerResults({ collection }) {
             onChange={(e) => setDelay(e.target.value)}
           />
         </div>
+
+        <RunnerConfiguration collection={collection}></RunnerConfiguration>
+
+        <button type="submit" disabled={!collectionFolders || collectionFolders.filter(f => f.selected).length == 0} className="submit btn btn-sm btn-secondary mt-6" onClick={runFolders}>
+          Run Folders
+        </button>
+
 
         <button type="submit" className="submit btn btn-sm btn-secondary mt-6" onClick={runCollection}>
           Run Collection

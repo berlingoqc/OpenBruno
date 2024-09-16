@@ -122,6 +122,12 @@ export const findParentItemInCollection = (collection, itemUid) => {
   });
 };
 
+export const findAllFoldersInCollection = (collection) => {
+  let flattenedItems = flattenItems(collection.items);
+
+  return filter(flattenedItems, (i) => i.type === "folder");
+};
+
 export const recursivelyGetAllItemUids = (items = []) => {
   let flattenedItems = flattenItems(items);
 

@@ -309,7 +309,7 @@ export const runCollectionFolder = (collectionUid, folderUid, recursive, delay) 
     ipcRenderer
       .invoke(
         'renderer:run-collection-folder',
-        folder,
+        [folder],
         collectionCopy,
         environment,
         collectionCopy.runtimeVariables,
@@ -1138,5 +1138,51 @@ export const saveCollectionSecurityConfig = (collectionUid, securityConfig) => (
         resolve();
       })
       .catch(reject);
+  });
+};
+
+export const runCollectionFolders = (collectionUid, folderUids, recursive, runtimeVariables, delay) => (dispatch, getState) => {
+  const state = getState();
+  const collection = findCollectionByUid(state.collections.collections, collectionUid);
+
+  return new Promise((resolve, reject) => {
+    if (!collection) {
+      return reject(new Error('Collection not found'));
+    }
+
+    const collectionCopy = cloneDeep(collection);
+    const folders = folderUids.map(folderUid => {
+      const folder = findItemInCollection(collectionCopy, folderUid);
+
+      if (folderUid && !folder) {
+        throw new Error('Folder not found');
+      }
+
+      return folder;
+    });
+    
+    const environment = findEnvironmentInCollection(collectionCopy, collection.activeEnvironmentUid);
+
+    dispatch(
+      resetRunResults({
+        collectionUid: collection.uid
+      })
+    );
+
+    ipcRenderer
+      .invoke(
+        'renderer:run-collection-folder',
+        folders,
+        collectionCopy,
+        environment,
+        collectionCopy.runtimeVariables,
+        recursive,
+        delay
+      )
+      .then(resolve)
+      .catch((err) => {
+        toast.error(get(err, 'error.message') || 'Something went wrong!');
+        reject(err);
+      });
   });
 };

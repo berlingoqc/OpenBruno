@@ -862,10 +862,10 @@ const registerNetworkIpc = (mainWindow) => {
 
   ipcMain.handle(
     'renderer:run-collection-folder',
-    async (event, folder, collection, environment, runtimeVariables, recursive, delay) => {
+    async (event, folders, collection, environment, runtimeVariables, recursive, delay) => {
       const collectionUid = collection.uid;
       const collectionPath = collection.pathname;
-      const folderUid = folder ? folder.uid : null;
+      const folderUid = folders.map(f => f ? f.uid : null);
       const cancelTokenUid = uuid();
       const brunoConfig = getBrunoConfig(collectionUid);
       const scriptingConfig = get(brunoConfig, 'scripts', {});
@@ -875,15 +875,15 @@ const registerNetworkIpc = (mainWindow) => {
       const abortController = new AbortController();
       saveCancelToken(cancelTokenUid, abortController);
 
-      if (!folder) {
-        folder = collection;
+      if (!folders) {
+        folders = [collection];
       }
 
       mainWindow.webContents.send('main:run-folder-event', {
         type: 'testrun-started',
         isRecursive: recursive,
         collectionUid,
-        folderUid,
+        folderUid: null,
         cancelTokenUid
       });
 
@@ -891,20 +891,25 @@ const registerNetworkIpc = (mainWindow) => {
         const envVars = getEnvVars(environment);
         let folderRequests = [];
 
-        if (recursive) {
-          let sortedFolder = sortFolder(folder);
-          folderRequests = getAllRequestsInFolderRecursively(sortedFolder);
-        } else {
-          each(folder.items, (item) => {
-            if (item.request) {
-              folderRequests.push(item);
-            }
-          });
+        for (const folder of folders) {
+          if (recursive) {
+            let sortedFolder = sortFolder(folder);
+            folderRequests.push(...getAllRequestsInFolderRecursively(sortedFolder));
+          } else {
+            const tmpFolderRequests = [];
+            each(folder.items, (item) => {
+              if (item.request) {
+                tmpFolderRequests.push({ item, folderUid: folder.uid });
+              }
+            });
 
-          // sort requests by seq property
-          folderRequests.sort((a, b) => {
-            return a.seq - b.seq;
-          });
+            // sort requests by seq property
+            tmpFolderRequests.sort((a, b) => {
+              return a.seq - b.seq;
+            });
+
+            folderRequests.push(...tmpFolderRequests);
+          }
         }
 
         let currentRequestIndex = 0;
@@ -917,7 +922,7 @@ const registerNetworkIpc = (mainWindow) => {
             throw error;
           }
 
-          const item = folderRequests[currentRequestIndex];
+          const { item, folderUid } = folderRequests[currentRequestIndex];
           let nextRequestName;
           const itemUid = item.uid;
           const eventData = {

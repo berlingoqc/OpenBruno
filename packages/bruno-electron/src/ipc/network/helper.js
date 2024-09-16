@@ -58,7 +58,7 @@ const getAllRequestsInFolderRecursively = (folder = {}) => {
   if (folder.items && folder.items.length) {
     folder.items.forEach((item) => {
       if (item.type !== 'folder') {
-        requests.push(item);
+        requests.push({ item, folderUid: folder.uid });
       } else {
         requests = requests.concat(getAllRequestsInFolderRecursively(item));
       }
