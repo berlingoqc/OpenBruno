@@ -1,6 +1,6 @@
 {
   "name": "openbruno",
-  "private": true,
+  "private": false,
   "workspaces": [
     "packages/bruno-app",
     "packages/bruno-electron",
