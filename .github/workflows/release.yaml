@@ -34,7 +34,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: build
+        name: build-${{ matrix.name }}
         path: |
           ./packages/bruno-electron/out/*.dmg
           ./packages/bruno-electron/out/*.AppImage
@@ -43,10 +43,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Retrieve saved Docker image
+    - name: Retrieve saved linux artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build
+        name: build-linux
+        path: ./packages/bruno-electron/out/*
+    - name: Retrieve saved mac artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-mac
         path: ./packages/bruno-electron/out/*
     - name: List packages
       run: ls -la ./packages/bruno-electron/out/
