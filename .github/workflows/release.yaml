@@ -1,10 +1,9 @@
-name: Release build
+name: Main release
 
 on:
   push:
     branches:
       - fork
-      - main
       - release-pipeline
 
 jobs:
@@ -33,9 +32,14 @@ jobs:
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+  release:
+    steps:
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        name: bruno_1.27.0-${{ matrix.name }}
-        path: packages/bruno-electron/out/bruno_1.27.0_arm64_mac.dmg
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          ./packages/bruno-electron/*
 
