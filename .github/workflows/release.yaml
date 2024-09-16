@@ -32,6 +32,11 @@ jobs:
 
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: build
+        path: ./packages/bruno-electron/*
       
 
   release:
@@ -40,6 +45,11 @@ jobs:
     - job: build
       artifacts: true
     steps:
+    - name: Retrieve saved Docker image
+      uses: actions/download-artifact@v2
+      with:
+        name: build
+        path: ./packages/bruno-electron/*
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
