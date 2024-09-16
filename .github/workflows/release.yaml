@@ -11,10 +11,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-latest, ubuntu-latest]
         include:
           - os: macos-latest
             name: mac
+          - os: ubuntu-latest
+            name: linux
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -32,8 +35,9 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: build
-        path: ./packages/bruno-electron/*
-      
+        path: |
+          ./packages/bruno-electron/out/*.dmg
+          ./packages/bruno-electron/out/*.AppImage
 
   release:
     runs-on: ubuntu-latest
@@ -43,7 +47,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build
-        path: ./packages/bruno-electron/*
+        path: ./packages/bruno-electron/out/*
+    - name: List packages
+      run: ls -la ./packages/bruno-electron/out/
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -51,5 +57,5 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          ./packages/bruno-electron/*
+          ./packages/bruno-electron/out/*
 
