@@ -15,9 +15,10 @@ jobs:
         include:
           - os: macos-latest
             name: mac
-            files_to_upload: |
-              arm64_mac.dmg
-              x64_mac.dmg
+    artifacts:
+      paths:
+        - ./packages/bruno-electron/*
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -31,8 +32,13 @@ jobs:
 
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
+      
 
   release:
+    runs-on: ubuntu-latest
+    needs:
+    - job: build
+      artifacts: true
     steps:
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
