@@ -1,10 +1,10 @@
 {
-  "name": "@usebruno/cli",
+  "name": "@openbruno/cli",
   "version": "1.16.0",
   "license": "MIT",
   "main": "src/index.js",
   "bin": {
-    "bru": "./bin/bru.js"
+    "openbru": "./bin/bru.js"
   },
   "bugs": {
     "url": "https://github.com/usebruno/bruno/issues"

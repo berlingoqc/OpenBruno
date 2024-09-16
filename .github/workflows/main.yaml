@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - fork
-      - release-pipeline
 
 jobs:
   build:
@@ -27,7 +26,7 @@ jobs:
       with:
         node-version: '18'
     - name: Install dependencies
-      run: npm install
+      run: npm ci --legacy-peer-deps
 
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
