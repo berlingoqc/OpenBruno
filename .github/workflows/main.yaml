@@ -55,7 +55,9 @@ jobs:
       with:
         node-version: '18'
     - name: Publish librarie is possible
-      run: cd packages/bruno-cli && (npm publish || echo "failed to publish, version not updated")
+      run: echo "//npm.pkg.github.com/:_authToken=${GITHUB_ACCESS_TOKEN}" >> $HOME/.npmrc && cd packages/bruno-cli && (npm publish || echo "failed to publish, version not updated")
+      env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.PAT }}
     - name: Docker build
       run: cd packages/bruno-cli && docker build --build-arg CLI_VERSION=$(npm run version --silent) -t ghcr.io/berlingoqc/openbruno/cli:$(npm run version --silent) .
     - name: Docker push
