@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fork
+      - change-name
 
 jobs:   
   build:
@@ -38,6 +39,27 @@ jobs:
         path: |
           ./packages/bruno-electron/out/*.dmg
           ./packages/bruno-electron/out/*.AppImage
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Login docker
+      run: docker login https://ghcr.io -u berlingoqc -p $GITHUB_ACCESS_TOKEN
+      env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.PAT }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Publish librarie is possible
+      run: cd packages/bruno-cli && (npm publish || echo "failed to publish, version not updated")
+    - name: Docker build
+      run: cd packages/bruno-cli && docker build --build-arg CLI_VERSION=$(npm run version --silent) -t ghcr.io/berlingoqc/openbruno/cli:$(npm run version --silent) .
+    - name: Docker push
+      run: docker push ghcr.io/berlingoqc/openbruno/cli:$(npm run version --silent) || echo "failed to publish, version not updated"
 
   release:
     runs-on: ubuntu-latest
