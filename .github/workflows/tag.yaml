@@ -82,7 +82,7 @@ jobs:
         path: ./packages/bruno-electron/out/*
 
     - name: List file
-      run: ls -la ./ && ls -la ./packages/bruno-electron/
+      run: ls -la ./ && ls -la ./packages/bruno-electron/out/
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
