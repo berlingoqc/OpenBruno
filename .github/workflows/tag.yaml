@@ -28,6 +28,9 @@ jobs:
     - name: Install dependencies
       run: npm ci --legacy-peer-deps
 
+    - name: Build web app
+      run: cd packages/bruno-app && npm run build
+
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
 
