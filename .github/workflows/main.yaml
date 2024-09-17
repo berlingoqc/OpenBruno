@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - fork
-      - change-name
 
 jobs:   
   build:
@@ -42,6 +41,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    needs: build
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
