@@ -80,15 +80,18 @@ jobs:
       with:
         name: build-mac
         path: ./packages/bruno-electron/out/*
-
-    - name: List file
-      run: ls -la ./ && ls -la ./packages/bruno-electron/out/
-    - name: Release
-      uses: softprops/action-gh-release@v1
+    - name: List packages
+      run: ls -la ./packages/bruno-electron/out/
+    - name: Get the version
+      id: tag
+      run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "${{ steps.tag.outputs.tag }}"
+        prerelease: false
+        title: "Release ${{ steps.tag.outputs.tag }}"
         files: |
-          ./packages/bruno-electron/out/*.dmg
-          ./packages/bruno-electron/out/*.AppImage
-        draft: true
+          ./packages/bruno-electron/out/*
 
 
