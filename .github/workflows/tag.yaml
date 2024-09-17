@@ -78,6 +78,9 @@ jobs:
       with:
         name: build-mac
         path: ./packages/bruno-electron/out/*
+
+    - name: List file
+      run: ls -la ./ && ls -la ./packages/bruno-electron/
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
