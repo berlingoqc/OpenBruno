@@ -29,7 +29,7 @@ jobs:
       run: npm ci --legacy-peer-deps
 
     - name: Build web app
-      run: cd packages/bruno-app && npm run build
+      run: npm run build:graphql-docs && npm run build:bruno-query && npm run build:bruno-common && npm run sandbox:bundle-libraries --workspace=packages/bruno-js && npm run build:web
 
     - name: Build the Electron app
       run: npm run build:electron:${{ matrix.name }}
