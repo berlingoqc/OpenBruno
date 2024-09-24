@@ -34,7 +34,7 @@ const envHasSecrets = (environment = {}) => {
   return secrets && secrets.length > 0;
 };
 
-const registerRendererEventHandlers = (mainWindow, watcher, lastOpenedCollections) => {
+const registerRendererEventHandlers = (mainWindow, watcher, lastOpenedCollections, lastClosedCollections) => {
   // browse directory
   ipcMain.handle('renderer:browse-directory', async (event, pathname, request) => {
     try {
@@ -432,6 +432,7 @@ const registerRendererEventHandlers = (mainWindow, watcher, lastOpenedCollection
       console.log(`watcher stopWatching: ${collectionPath}`);
       watcher.removeWatcher(collectionPath, mainWindow);
       lastOpenedCollections.remove(collectionPath);
+      lastClosedCollections.push(collectionPath);
     }
   });
 
@@ -715,7 +716,7 @@ const registerRendererEventHandlers = (mainWindow, watcher, lastOpenedCollection
   });
 };
 
-const registerMainEventHandlers = (mainWindow, watcher, lastOpenedCollections) => {
+const registerMainEventHandlers = (mainWindow, watcher, lastOpenedCollections, lastClosedCollections) => {
   ipcMain.on('main:open-collection', () => {
     if (watcher && mainWindow) {
       openCollectionDialog(mainWindow, watcher);
@@ -730,6 +731,12 @@ const registerMainEventHandlers = (mainWindow, watcher, lastOpenedCollections) =
   ipcMain.on('main:collection-opened', (win, pathname, uid, brunoConfig) => {
     watcher.addWatcher(win, pathname, uid, brunoConfig);
     lastOpenedCollections.add(pathname);
+
+
+    const closedCollectionsIndex = lastClosedCollections.findIndex((v) => v === pathname);
+    if (closedCollectionsIndex >= 0) {
+      lastClosedCollections = lastClosedCollections.slice(closedCollectionsIndex, 1);
+    }
     app.addRecentDocument(pathname);
   });
 
@@ -747,9 +754,9 @@ const registerMainEventHandlers = (mainWindow, watcher, lastOpenedCollections) =
   });
 };
 
-const registerCollectionsIpc = (mainWindow, watcher, lastOpenedCollections) => {
-  registerRendererEventHandlers(mainWindow, watcher, lastOpenedCollections);
-  registerMainEventHandlers(mainWindow, watcher, lastOpenedCollections);
+const registerCollectionsIpc = (mainWindow, watcher, lastOpenedCollections, lastClosedCollections) => {
+  registerRendererEventHandlers(mainWindow, watcher, lastOpenedCollections, lastClosedCollections);
+  registerMainEventHandlers(mainWindow, watcher, lastOpenedCollections, lastClosedCollections);
 };
 
 module.exports = registerCollectionsIpc;
