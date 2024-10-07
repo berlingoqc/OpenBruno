@@ -1187,6 +1187,7 @@ export const openCollectionEvent = (uid, pathname, brunoConfig) => (dispatch, ge
     pathname: pathname,
     items: [],
     runtimeVariables: {},
+    runs: [],
     brunoConfig: brunoConfig
   };
 
