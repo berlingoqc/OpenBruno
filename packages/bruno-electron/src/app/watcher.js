@@ -4,7 +4,7 @@ const path = require('path');
 const chokidar = require('chokidar');
 const { hasBruExtension } = require('../utils/filesystem');
 const { bruToEnvJson, bruToJson, collectionBruToJson, jsonToCollectionBru } = require('../bru');
-const { dotenvToJson } = require('@usebruno/lang');
+const { dotenvToJson } = require('@berlingoqc/openbruno-lang');
 
 const { uuid } = require('../utils/common');
 const { getRequestUid } = require('../cache/requestUids');

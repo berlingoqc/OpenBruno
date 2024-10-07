@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 import { uuid, normalizeFileName } from 'utils/common';
 import { isItemARequest } from 'utils/collections';
-import { collectionSchema } from '@usebruno/schema';
+import { collectionSchema } from '@berlingoqc/openbruno-schema';
 import { BrunoError } from 'utils/common/error';
 
 export const validateSchema = (collection = {}) => {

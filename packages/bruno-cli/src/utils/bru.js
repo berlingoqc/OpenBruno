@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { bruToEnvJsonV2, bruToJsonV2, bruToRunConfigJsonV2, collectionBruToJson: _collectionBruToJson } = require('@usebruno/lang');
+const { bruToEnvJsonV2, bruToJsonV2, bruToRunConfigJsonV2, collectionBruToJson: _collectionBruToJson } = require('@berlingoqc/openbruno-lang');
 
 const collectionBruToJson = (bru) => {
   try {

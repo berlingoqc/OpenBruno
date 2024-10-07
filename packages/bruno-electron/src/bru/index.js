@@ -6,7 +6,7 @@ const {
   envJsonToBruV2,
   collectionBruToJson: _collectionBruToJson,
   jsonToCollectionBru: _jsonToCollectionBru
-} = require('@usebruno/lang');
+} = require('@berlingoqc/openbruno-lang');
 
 const collectionBruToJson = (bru) => {
   try {

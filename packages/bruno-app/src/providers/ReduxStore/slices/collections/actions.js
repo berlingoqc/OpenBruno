@@ -1,4 +1,4 @@
-import { collectionSchema, environmentSchema, itemSchema } from '@usebruno/schema';
+import { collectionSchema, environmentSchema, itemSchema } from '@berlingoqc/openbruno-schema';
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
