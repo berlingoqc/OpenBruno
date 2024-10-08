@@ -799,6 +799,19 @@ export const getDefaultRequestPaneTab = (item) => {
   }
 };
 
+export const getGlobalEnvironmentVariables = ({ globalEnvironments, activeGlobalEnvironmentUid }) => {
+  let variables = {};
+  const environment = globalEnvironments?.find(env => env?.uid === activeGlobalEnvironmentUid);
+  if (environment) {
+    each(environment.variables, (variable) => {
+      if (variable.name && variable.value && variable.enabled) {
+        variables[variable.name] = variable.value;
+      }
+    });
+  }
+  return variables;
+};
+
 export const getEnvironmentVariables = (collection) => {
   let variables = {};
   if (collection) {
@@ -814,6 +827,7 @@ export const getEnvironmentVariables = (collection) => {
 
   return variables;
 };
+
 
 const getPathParams = (item) => {
   let pathParams = {};
@@ -841,14 +855,17 @@ export const getTotalRequestCountInCollection = (collection) => {
 };
 
 export const getAllVariables = (collection, item) => {
+  if(!collection) return {};
   const envVariables = getEnvironmentVariables(collection);
   const requestTreePath = getTreePathFromCollectionToItem(collection, item);
   let { collectionVariables, folderVariables, requestVariables } = mergeVars(collection, requestTreePath);
   const pathParams = getPathParams(item);
+  const { globalEnvironmentVariables = {} } = collection;
 
   const { processEnvVariables = {}, runtimeVariables = {} } = collection;
 
   return {
+    ...globalEnvironmentVariables,
     ...collectionVariables,
     ...envVariables,
     ...folderVariables,
